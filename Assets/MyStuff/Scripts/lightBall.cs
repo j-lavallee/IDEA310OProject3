@@ -1,0 +1,58 @@
+using JetBrains.Annotations;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class lightBall : MonoBehaviour
+{
+    public GameObject holder;
+    public GameObject player;
+    public float speed = 5f;
+    public bool recall = false;
+    private Rigidbody rb;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.linearVelocity = holder.transform.forward * speed;
+    }
+
+    void FixedUpdate()
+    {
+        if (recall)
+        {
+            rb.isKinematic = false;
+            Vector3 toTarget = holder.transform.position - rb.position;
+            float distanceToTarget = toTarget.magnitude;
+            Vector3 direction = toTarget / distanceToTarget;
+
+            if (distanceToTarget < 0.25f)
+            {
+                rb.linearVelocity = Vector3.zero;
+                Destroy(gameObject);
+                player.GetComponent<lightBallController>().lightBall.SetActive(true);
+                return;
+            }
+
+            RaycastHit hit;
+            float castDistance = 1.25f;
+            float sphereRadius = 0.25f;
+            Vector3 desiredDirection = direction;
+
+            if (Physics.SphereCast(rb.position, sphereRadius, direction, out hit, castDistance))
+            {
+                Vector3 avoid = Vector3.Cross(hit.normal, Vector3.up).normalized;
+                desiredDirection = Vector3.Lerp(direction, avoid, 0.5f).normalized;
+            }
+
+            rb.linearVelocity = desiredDirection * speed;
+        }
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Sticky"))
+        {
+            rb.isKinematic = true;
+        }
+    }
+}
