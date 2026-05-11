@@ -9,6 +9,8 @@ public class lightBall : MonoBehaviour
     public float speed = 5f;
     public bool recall = false;
     private Rigidbody rb;
+    public float maxRecallTime = 7f;
+    private float currentRecallTime = 0f;
 
     void Start()
     {
@@ -20,6 +22,17 @@ public class lightBall : MonoBehaviour
     {
         if (recall)
         {
+            currentRecallTime += Time.fixedDeltaTime;
+
+            if (currentRecallTime >= maxRecallTime)
+            {
+                recall = false;
+                currentRecallTime = 0f;
+                Destroy(gameObject);
+                player.GetComponent<lightBallController>().lightBall.SetActive(true);
+                return;
+            }
+
             rb.isKinematic = false;
             Vector3 toTarget = holder.transform.position - rb.position;
             float distanceToTarget = toTarget.magnitude;
@@ -35,7 +48,7 @@ public class lightBall : MonoBehaviour
 
             RaycastHit hit;
             float castDistance = 1.25f;
-            float sphereRadius = 0.25f;
+            float sphereRadius = 0.3f;
             Vector3 desiredDirection = direction;
 
             if (Physics.SphereCast(rb.position, sphereRadius, direction, out hit, castDistance))
@@ -50,7 +63,7 @@ public class lightBall : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Sticky"))
+        if (collision.gameObject.CompareTag("Sticky") && !recall)
         {
             rb.isKinematic = true;
         }

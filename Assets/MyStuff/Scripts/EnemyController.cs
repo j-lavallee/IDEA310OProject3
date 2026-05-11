@@ -25,7 +25,6 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float losePlayerTime = 3f;
     [SerializeField] private float attackRange = 1f;
 
-
     private NavMeshAgent agent;
     private Animator animator;
     private EnemyState state = EnemyState.Patrolling;
