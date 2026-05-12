@@ -11,10 +11,12 @@ public class lightBall : MonoBehaviour
     private Rigidbody rb;
     public float maxRecallTime = 7f;
     private float currentRecallTime = 0f;
+    private lightBallController controller;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        controller = player.GetComponent<lightBallController>();
         rb.linearVelocity = holder.transform.forward * speed;
     }
 
@@ -28,21 +30,23 @@ public class lightBall : MonoBehaviour
             {
                 recall = false;
                 currentRecallTime = 0f;
+                controller.lightBall.SetActive(true);
+                controller.recalled();
                 Destroy(gameObject);
-                player.GetComponent<lightBallController>().lightBall.SetActive(true);
                 return;
             }
 
             rb.isKinematic = false;
             Vector3 toTarget = holder.transform.position - rb.position;
             float distanceToTarget = toTarget.magnitude;
-            Vector3 direction = toTarget / distanceToTarget;
+            Vector3 direction = toTarget.normalized;
 
             if (distanceToTarget < 0.25f)
             {
                 rb.linearVelocity = Vector3.zero;
+                controller.lightBall.SetActive(true);
+                controller.recalled();
                 Destroy(gameObject);
-                player.GetComponent<lightBallController>().lightBall.SetActive(true);
                 return;
             }
 

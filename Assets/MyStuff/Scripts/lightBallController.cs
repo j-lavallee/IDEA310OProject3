@@ -1,5 +1,5 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.AdaptivePerformance;
 using UnityEngine.InputSystem;
 
 public class lightBallController : MonoBehaviour
@@ -8,6 +8,8 @@ public class lightBallController : MonoBehaviour
     public GameObject lightBall;
     public GameObject holder;
     private GameObject currentBall;
+    public healthBar healthBar;
+    public Coroutine regen;
 
     void Update()
     {
@@ -20,11 +22,48 @@ public class lightBallController : MonoBehaviour
                 currentBall.GetComponent<lightBall>().holder = holder;
                 currentBall.GetComponent<lightBall>().player = gameObject;
             }
-            else if (currentBall != null)
+            else
             {
                 currentBall.GetComponent<lightBall>().recall = true;
                 currentBall.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
             }
         }
+
+        bool shouldRegen = currentBall == null && healthBar.health < healthBar.maxHealth;
+
+        if (shouldRegen)
+        {
+            if (regen == null)
+            {
+                regen = StartCoroutine(RegenHealth());
+            }
+        }
+        else
+        {
+            if (regen != null)
+            {
+                StopCoroutine(regen);
+                regen = null;
+            }
+        }
+    }
+
+    private IEnumerator RegenHealth()
+    {
+        healthBar hB = healthBar;
+
+        while (hB.health < hB.maxHealth)
+        {
+            hB.health += 5f;
+            hB.health = Mathf.Min(hB.health, hB.maxHealth);
+            yield return new WaitForSeconds(1.25f);
+        }
+
+        regen = null;
+    }
+
+    public void recalled()
+    {
+        currentBall = null;
     }
 }

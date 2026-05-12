@@ -16,6 +16,7 @@ public class EnemyController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform player;
     [SerializeField] private Transform[] patrolPoints;
+    [SerializeField] private Renderer[] enemyRenderers;
 
     [Header("Settings")]
     [SerializeField] private float patrolWaitTime = 2f;
@@ -24,6 +25,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float viewAngle = 180f;
     [SerializeField] private float losePlayerTime = 3f;
     [SerializeField] private float attackRange = 1f;
+    [SerializeField] public float enemyHealth = 100f;
+    [SerializeField] public float playerDamage = 10f;
+    [SerializeField] public float damageMult = 1f;
+    [SerializeField] private float force = 1f;
 
     private NavMeshAgent agent;
     private Animator animator;
@@ -32,13 +37,22 @@ public class EnemyController : MonoBehaviour
     private bool isWaiting;
     private float timeSinceLostPlayer;
     private bool isAttacking;
+    private float attackTimeout = 1.5f;
+    private float attackTimer;
 
     public healthBar healthBar;
+    public enemyCounter enemyCounter;
+    public GameObject ragdoll;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+
+        if (enemyRenderers == null || enemyRenderers.Length == 0)
+        {
+            enemyRenderers = GetComponentsInChildren<Renderer>();
+        }
     }
 
     private void Start()
@@ -90,6 +104,12 @@ public class EnemyController : MonoBehaviour
 
             case EnemyState.Attacking:
                 Attack();
+                attackTimer += Time.deltaTime;
+
+                if (attackTimer >= attackTimeout)
+                {
+                    EndAttack();
+                }
 
                 if (!isAttacking && distanceToPlayer > attackRange)
                 {
@@ -108,6 +128,7 @@ public class EnemyController : MonoBehaviour
     {
         agent.isStopped = true;
         isAttacking = true;
+        attackTimer = 0f;
         animator.SetTrigger("Attack");
     }
 
@@ -123,15 +144,20 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void OnAttackAnimationEnd()
+    private void EndAttack()
     {
-        var distanceToPlayer = Vector3.Distance(player.position, transform.position);
         isAttacking = false;
         agent.isStopped = false;
+        attackTimer = 0f;
+        var distanceToPlayer = Vector3.Distance(player.position, transform.position);
 
         if (distanceToPlayer <= attackRange)
         {
             StartAttack();
+        }
+        else
+        {
+            state = EnemyState.Following;
         }
     }
 
@@ -229,8 +255,51 @@ public class EnemyController : MonoBehaviour
 
         if (distanceToPlayer <= attackRange)
         {
-            healthBar.health -= 10f;
+            healthBar.health -= 15f;
         }
 
+    }
+
+    public void setMaterial(Material newMaterial)
+    {
+        if (enemyRenderers == null) return;
+
+        foreach (Renderer renderer in enemyRenderers)
+        {
+            if (renderer == null) continue;
+
+            Material[] materials = renderer.materials;
+
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i] = newMaterial;
+            }
+
+            renderer.materials = materials;
+        }
+    }
+
+    public void takeDamage()
+    {
+        enemyHealth -= playerDamage * damageMult;
+
+        if (enemyHealth <= 0)
+        {
+            dead();
+        }
+    }
+
+    private void dead()
+    {
+        enemyCounter.addOne();
+        Vector3 pushDirection = (transform.position - player.position).normalized;
+        Destroy(gameObject);
+        var rg = Instantiate(ragdoll, transform.position, transform.rotation);
+
+        foreach (Rigidbody bone in rg.GetComponentsInChildren<Rigidbody>())
+        {
+            bone.AddForce(pushDirection * force, ForceMode.VelocityChange);
+        }
+        
     }
 }
