@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/MyStuff/Scenes/MainMenu.unity
     guid: 571a70e9a54400042bf26fa94f2a15ea
   - enabled: 1
+    path: Assets/MyStuff/Scenes/Tutorial.unity
+    guid: 1684305c691baab418536664356cc1d2
+  - enabled: 1
     path: Assets/MyStuff/Scenes/OneShotLevel.unity
     guid: 54637644d6f035140a505037d12e4685
   - enabled: 1

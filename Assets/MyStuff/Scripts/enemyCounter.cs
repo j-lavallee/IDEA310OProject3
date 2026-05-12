@@ -11,8 +11,7 @@ public class enemyCounter : MonoBehaviour
     {
         if (count == specifiedCount)
         {
-            Animator doorAnimator = door.GetComponent<Animator>();
-            doorAnimator.Play("Open");
+            Destroy(door);
             Destroy(gameObject);
         }
     }
