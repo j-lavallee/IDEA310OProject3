@@ -354,7 +354,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -129.76}
+  m_AnchoredPosition: {x: 0, y: -116.84}
   m_SizeDelta: {x: 210, y: 315}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &394913030
@@ -381,15 +381,17 @@ MonoBehaviour:
 
     Shift to sprint.
 
-    Left click to attack.
+    Esc to pause
 
-    Right
-    click to send out the Orb of Light (it sticks to most walls). Right click again
-    to recall. When you hold the Orb it heals you. When an enemy is in the range
-    of the Orb they take double the damage.
+    Left click
+    to attack.
 
-    Find and defeat all enemies to progress
-    in each area.'
+    Right click to send out the Orb of Light (it sticks to most walls).
+    Right click again to recall. When you hold the Orb it heals you. When an enemy
+    is in the range of the Orb they take double the damage.
+
+    Find and defeat
+    all enemies to progress in each area.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 96945997c518e1742b4ab332b156b6a0, type: 2}
   m_sharedMaterial: {fileID: 7384232335421703446, guid: 96945997c518e1742b4ab332b156b6a0, type: 2}
