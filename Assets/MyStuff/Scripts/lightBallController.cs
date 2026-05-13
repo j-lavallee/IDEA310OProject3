@@ -54,7 +54,7 @@ public class lightBallController : MonoBehaviour
 
         while (hB.health < hB.maxHealth)
         {
-            hB.health += 5f;
+            hB.health += 7.5f;
             hB.health = Mathf.Min(hB.health, hB.maxHealth);
             yield return new WaitForSeconds(1.25f);
         }

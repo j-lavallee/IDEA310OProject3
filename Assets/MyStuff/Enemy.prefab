@@ -534,7 +534,7 @@ MonoBehaviour:
   enemyRenderers: []
   patrolWaitTime: 2
   stopAtDistance: 0.5
-  detectionRange: 10
+  detectionRange: 20
   viewAngle: 180
   losePlayerTime: 3
   attackRange: 2

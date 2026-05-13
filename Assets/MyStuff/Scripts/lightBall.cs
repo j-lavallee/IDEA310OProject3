@@ -9,7 +9,7 @@ public class lightBall : MonoBehaviour
     public float speed = 5f;
     public bool recall = false;
     private Rigidbody rb;
-    public float maxRecallTime = 7f;
+    public float maxRecallTime = 5f;
     private float currentRecallTime = 0f;
     private lightBallController controller;
 
